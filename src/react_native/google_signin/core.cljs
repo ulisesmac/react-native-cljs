@@ -2,7 +2,8 @@
   (:require ["@react-native-google-signin/google-signin" :refer [GoogleSignin isSuccessResponse]]
             [applied-science.js-interop :as j]
             [cljs-bean.core :refer [->clj]]
-            [react-native.utils :refer [prop]]))
+            [react-native.utils :refer [prop]]
+            [react-native.firebase.auth.core :as auth]))
 
 (defn configure! []
   (j/call GoogleSignin :configure
@@ -18,3 +19,14 @@
 (defn ^:async sign-out! []
   (configure!)
   (await (j/call GoogleSignin :signOut)))
+
+(defn ^:async login! []
+  (let [auth-instance (auth/auth)
+        id-token      (-> (await (sign-in!)) :data :idToken)]
+    (when-not id-token
+      (throw (js/Error. "Google Sign-In did not return an id token.")))
+    (j/call auth-instance :signInWithCredential (j/call GoogleAuthProvider :credential id-token))))
+
+(defn ^:async logout! []
+  (await (j/call (auth/auth) :signOut))
+  (await (sign-out!)))

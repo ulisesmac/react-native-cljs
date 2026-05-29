@@ -66,6 +66,9 @@
                                           "ERROR!"]
                                          [:rn/text
                                           (str (:error @info) "\n"
-                                               (some-> @info ^js (:error-info) (.-componentStack) (subs 0 100))
+                                               (some-> @info
+                                                       (:error-info)
+                                                       (j/get :componentStack)
+                                                       (subs 0 100))
                                                "\n")]]
                                         child))})))
