@@ -1,0 +1,40 @@
+(ns react-native.react-navigation.native
+  (:require
+   ["@react-navigation/native" :refer [CommonActions
+                                       createStaticNavigation
+                                       createStaticNavigator
+                                       createNavigationContainerRef
+                                       useNavigation
+                                       useRoute
+                                       StackActions
+                                       useFocusEffect
+                                       usePreventRemove]]
+   [applied-science.js-interop :as j]
+   [reagent.core :as r]))
+
+(def create-navigation-container-ref createNavigationContainerRef)
+
+(def use-route useRoute)
+
+(defn use-route-key []
+  (j/get (useRoute) :key))
+
+(defn use-navigation []
+  (let [js-nav-functions (useNavigation)]
+    {:navigate (j/get js-nav-functions :navigate)
+     :go-back  (j/get js-nav-functions :goBack)}))
+
+(defn reset-route [new-route]
+  (.reset CommonActions #js {:index 1
+                             :routes new-route}))
+
+(defn create-static-navigation [stack]
+  (r/adapt-react-class (createStaticNavigation stack)))
+
+
+(def stack-actions StackActions)
+
+(def common-actions CommonActions)
+
+(def use-focus-effect useFocusEffect)
+(def use-prevent-remove usePreventRemove)

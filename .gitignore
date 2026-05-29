@@ -1,0 +1,33 @@
+# OS/editor
+.DS_Store
+/.idea/
+/.vscode/
+/.calva/
+/*.iml
+*.iml
+*~
+.#*
+
+# Clojure/ClojureScript
+/.cpcache/
+/.shadow-cljs/
+/.clj-kondo/.cache/
+/target/
+/out/
+/.nrepl-port
+
+# JavaScript package tooling
+/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local env
+/.env
+/.env.*
+!.env.example
+
+# Build output
+/build/
+/dist/
