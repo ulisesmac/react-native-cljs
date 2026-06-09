@@ -14,10 +14,15 @@
 (def threaded (r/adapt-react-class (j/get runtimes :Threaded)))
 (def threaded-screen (r/adapt-react-class (j/get runtimes :ThreadedScreen)))
 (def threaded-react-surface (r/adapt-react-class (j/get runtimes :ThreadedReactSurface)))
-(def threaded-runtime-host (r/adapt-react-class (j/get runtimes :ThreadedRuntimeHost)))
-
-(def threaded-component (j/get runtimes :threadedComponent))
+(def threaded-component (j/get runtimes :ThreadedComponent))
 (def register-threaded-component! (j/get runtimes :registerThreadedComponent))
+
+(defn register-reagent-component! [component-name component-fn]
+  (let [comp-name (name component-name)]
+    (->> (fn [props] (r/as-element [@component-fn props]))
+         (.threadedComponent runtimes comp-name)
+         (.registerThreadedComponent runtimes comp-name))))
+
 (def register-lazy-threaded-component! (j/get runtimes :registerLazyThreadedComponent))
 (def register-threaded-headless-task! (j/get runtimes :registerThreadedHeadlessTask))
 
