@@ -34,6 +34,12 @@
   {:error   (or (some-> e .-name) "Error")
    :details (or (some-> e .-message) (str e))})
 
+(defn- execution-error? [result]
+  (boolean
+   (and (map? result)
+        (:error result)
+        (:details result))))
+
 (defn register-executor! [k f-var]
   (let [fn-id     (j/get k :fqn)
         tagged-fn (runtimes/runtime-function-named
@@ -47,12 +53,28 @@
 
 (defn get-caller
   "Returns a function which `k`(id) will be executed on `target-runtime`.
-   `k` must be previously registered on `target-runtime`."
+   `k` must be previously registered on `target-runtime`.
+   `:on-success` and `:on-error` callback params run on the caller runtime."
   [k target-runtime]
   (let [fn-id      (j/get k :fqn)
         runtime-id (name target-runtime)
         tagged-fn  (runtimes/runtime-function-named fn-id (fn dummy-fn []))]
     (^:async fn caller [params]
-      (let [f      (j/call (runtimes/call tagged-fn) :on runtime-id)
-            result (await (f (encode params)))]
-        (decode result)))))
+      (let [on-success  (when (map? params) (:on-success params))
+            on-error    (when (map? params) (:on-error params))
+            call-params (if (map? params)
+                          (dissoc params :on-success :on-error)
+                          params)]
+        (try
+          (let [f      (j/call (runtimes/call tagged-fn) :on runtime-id)
+                result (decode (await (f (encode call-params))))]
+            (if (execution-error? result)
+              (when on-error
+                (on-error result))
+              (when on-success
+                (on-success result)))
+            result)
+          (catch :default e
+            (when on-error
+              (on-error e))
+            (throw e)))))))

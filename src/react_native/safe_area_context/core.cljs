@@ -5,7 +5,7 @@
 ;; TODO: extract dynamic safe areas
 
 (def initial-window-metrics
-  (js->clj (.-initialWindowMetrics safe-area-context) :keywordize-keys true))
+  (->clj (.-initialWindowMetrics safe-area-context)))
 
 (def ^{:deprecated "Use use-top instead."} top
   (-> initial-window-metrics :insets :top))
