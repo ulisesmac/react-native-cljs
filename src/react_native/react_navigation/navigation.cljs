@@ -1,7 +1,7 @@
 (ns react-native.react-navigation.navigation
   (:require
    [applied-science.js-interop :as j]
-   [cljs.reader]
+   [react-native.encoding :as encoding]
    [react-native.react-navigation.native :refer [common-actions create-navigation-container-ref stack-actions]]
    [react-native.utils :as rn.utils]
    [reagent.core :as r]))
@@ -15,15 +15,15 @@
 
 (defn ->js-nav-params [params]
   (-> params
-      (update-keys prn-str)
-      (update-vals prn-str)
+      (update-keys encoding/->transit)
+      (update-vals encoding/->transit)
       clj->js))
 
 (defn ->clj-nav-params [params]
   (some-> params
           js->clj
-          (update-keys cljs.reader/read-string)
-          (update-vals cljs.reader/read-string)))
+          (update-keys encoding/->clj)
+          (update-vals encoding/->clj)))
 
 (defn true-sheet-parts [{:keys [header footer] :as options}]
   (fn [props]

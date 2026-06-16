@@ -29,29 +29,36 @@
     (r/reactify-component
      (with-meta dummy-class-component {:display-name display-name}))))
 
+(defn- screen-value [screen]
+  (if (satisfies? IDeref screen)
+    @screen
+    screen))
+
+(defn- ->js-screen [screen-kw screen error-boundary]
+  (let [value (screen-value screen)]
+    (cond
+      (j/get value :displayName)
+      value
+
+      (fn? value)
+      (reactify-screen screen-kw screen error-boundary)
+
+      :else
+      value)))
+
+(defn- ->js-screen-config [screen-kw screen error-boundary]
+  (if (map? screen)
+    (-> screen
+        (update :screen (fn [screen]
+                          (->js-screen screen-kw screen error-boundary)))
+        rn.utils/->js-prop-obj)
+    (->js-screen screen-kw screen error-boundary)))
+
 (defn ->js-screens-data
   ([screens-map]
    (->js-screens-data screens-map #'util/error-boundary))
   ([screens-map error-boundary]
    (reduce-kv (fn [acc screen-kw screen]
-                (assoc acc (name screen-kw) (cond
-                                              (j/get screen :displayName)
-                                              screen
-
-                                              (and (fn? screen))
-                                              (reactify-screen screen-kw screen error-boundary)
-
-                                              (and (map? screen) (fn? (:screen screen)))
-                                              (-> screen
-                                                  (update :screen
-                                                          (fn [screen-component]
-                                                            (reactify-screen
-                                                             screen-kw
-                                                             screen-component
-                                                             error-boundary)))
-                                                  rn.utils/->js-prop-obj)
-
-                                              :else
-                                              screen)))
+                (assoc acc (name screen-kw) (->js-screen-config screen-kw screen error-boundary)))
               {}
               screens-map)))
