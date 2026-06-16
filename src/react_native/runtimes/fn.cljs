@@ -41,7 +41,7 @@
         (:details result))))
 
 (defn register-executor! [k f-var]
-  (let [fn-id     (j/get k :fqn)
+  (let [fn-id     (.-fqn ^js k)
         tagged-fn (runtimes/runtime-function-named
                    fn-id
                    (^:async fn [params]
@@ -56,7 +56,7 @@
    `k` must be previously registered on `target-runtime`.
    `:on-success` and `:on-error` callback params run on the caller runtime."
   [k target-runtime]
-  (let [fn-id      (j/get k :fqn)
+  (let [fn-id      (.-fqn ^js k)
         runtime-id (name target-runtime)
         tagged-fn  (runtimes/runtime-function-named fn-id (fn dummy-fn []))]
     (^:async fn caller [params]
