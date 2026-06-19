@@ -1,6 +1,6 @@
 (ns react-native.react.core
   (:require
-   ["react" :refer [createContext useCallback useContext useEffect useMemo useRef useState]]))
+   ["react" :refer [createContext useCallback useContext useEffect useLayoutEffect useMemo useRef useState]]))
 
 (def create-context createContext)
 (def use-context useContext)
@@ -25,6 +25,12 @@
    (useEffect (fn-wrapper f)))
   ([f deps]
    (useEffect (fn-wrapper f) (deps-array deps))))
+
+(defn use-layout-effect
+  ([f]
+   (useLayoutEffect (fn-wrapper f)))
+  ([f deps]
+   (useLayoutEffect (fn-wrapper f) (deps-array deps))))
 
 (defn use-callback [f deps]
   (useCallback f (deps-array deps)))
