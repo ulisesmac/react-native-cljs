@@ -21,6 +21,7 @@
                     (try
                       (encoding/encode (await ((deref f-var) (encoding/decode params))))
                       (catch :default e
+                        (js/console.error "Runtime executor failed" fn-id e)
                         (encoding/encode (execution-error e))))))]
     (runtimes/register-runtime-function! fn-id (fn [] tagged-fn))))
 
