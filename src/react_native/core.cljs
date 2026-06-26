@@ -131,11 +131,9 @@
 
 (defn use-window-dimensions
   "Returns the current React Native window dimensions as a map with `:width`,
-  `:height`, and `:scale`.
-
-  On Android, these window metrics are not guaranteed to be safe-area
-  normalized. Depending on the device, OEM, and navigation mode, `:height` may
-  or may not include areas covered by system bars."
+  `:height`, and `:scale`. Current React Native versions account for Android
+  system bars in these window metrics; use safe-area insets separately when a
+  layout needs explicit inset padding."
   []
   (let [dimensions (useWindowDimensions)]
     {:height (j/get dimensions :height)
