@@ -32,8 +32,8 @@
                                 :name (:name route)}
                  :route-params (->clj-nav-params (:params route))}]
       (-> options
-          (assoc :header (r/as-element [header props])
-                 :footer (r/as-element [footer props]))
+          (cond-> header (assoc :header (r/as-element [header props]))
+                  footer (assoc :footer (r/as-element [footer props])))
           (rn.utils/->js-prop-obj)))))
 
 (defn- ->js-nested-nav-params [routes params]
