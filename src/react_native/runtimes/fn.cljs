@@ -3,15 +3,12 @@
             [react-native.encoding :as encoding]
             [react-native.runtimes.core :as runtimes]))
 
-(defn- execution-error [e]
+(defn- execution-error [^js/Object e]
   {:error   (or (some-> e .-name) "Error")
    :details (or (some-> e .-message) (str e))})
 
 (defn- execution-error? [result]
-  (boolean
-   (and (map? result)
-        (:error result)
-        (:details result))))
+  (boolean (and (:error result) (:details result))))
 
 (defn register-executor! [k f-var]
   (let [fn-id     (.-fqn ^js k)
@@ -34,18 +31,15 @@
         runtime-id (name target-runtime)
         tagged-fn  (runtimes/runtime-function-named fn-id (fn dummy-fn []))]
     (^:async fn caller [params]
-      (let [on-success  (when (map? params) (:on-success params))
-            on-error    (when (map? params) (:on-error params))
-            call-params (if (map? params)
-                          (dissoc params :on-success :on-error)
-                          params)]
+      (let [on-error    (:on-error params)
+            call-params (dissoc params :on-success :on-error)]
         (try
           (let [f      (j/call (runtimes/call tagged-fn) :on runtime-id)
                 result (encoding/decode (await (f (encoding/encode call-params))))]
             (if (execution-error? result)
               (when on-error
                 (on-error result))
-              (when on-success
+              (when-let [on-success (:on-success params)]
                 (on-success result)))
             result)
           (catch :default e
