@@ -26,3 +26,8 @@
  :fx.navigation/go-back
  (fn [_]
    (nav/go-back!)))
+
+(rf/reg-event-fx
+ :evt.navigation/go-back
+ (fn [_ _]
+   {:fx [[:fx.navigation/go-back nil]]}))
