@@ -1,0 +1,3 @@
+{:lint-as
+ {react-native.utils/defstyle clojure.core/def
+  react-native.utils/style    clojure.core/identity}}
