@@ -92,6 +92,23 @@
        (j/call navigation-ref :dispatch pop-to-action))
      (js/console.error "NAVIGATION IS NOT READY!"))))
 
+(defn pop-to-nested!
+  ([navigator route]
+   (pop-to-nested! navigator route nil))
+  ([navigator route params]
+   (if (ready?)
+     (let [route-params  #js{:screen (name route)
+                             :params (->js-nav-params params)
+                             :merge  true
+                             :pop    true}
+           pop-to-action (j/call stack-actions
+                                 :popTo
+                                 (name navigator)
+                                 route-params
+                                 #js{:merge true})]
+       (j/call navigation-ref :dispatch pop-to-action))
+     (js/console.error "NAVIGATION IS NOT READY!"))))
+
 (defn pop-to-target!
   ([target route]
    (pop-to-target! target route nil))
