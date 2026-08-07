@@ -10,6 +10,7 @@
                                        useFocusEffect
                                        usePreventRemove]]
    [applied-science.js-interop :as j]
+   [react-native.react.core :as react]
    [reagent.core :as r]))
 
 (def create-navigation-container-ref createNavigationContainerRef)
@@ -36,5 +37,7 @@
 
 (def common-actions CommonActions)
 
-(def use-focus-effect useFocusEffect)
+(defn use-focus-effect [f]
+  (useFocusEffect (react/use-callback (react/fn-wrapper f) [f])))
+
 (def use-prevent-remove usePreventRemove)

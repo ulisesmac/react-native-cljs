@@ -5,7 +5,7 @@
 (def create-context createContext)
 (def use-context useContext)
 
-(defn- fn-wrapper [f]
+(defn fn-wrapper [f]
   (fn []
     (let [result (f)]
       (if (fn? result)
