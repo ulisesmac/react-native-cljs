@@ -108,6 +108,11 @@
 (defn share-text [text]
   (j/call Share :share #js{:message text}))
 
+(defn share-url
+  "Opens the native share dialog using `message` on Android and `url` on iOS."
+  [url]
+  (j/call Share :share (if android? #js{:message url} #js{:url url})))
+
 (def android-version (j/get platform :Version))
 
 (def android-permission
