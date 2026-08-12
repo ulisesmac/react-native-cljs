@@ -1,3 +1,5 @@
 {:lint-as
- {react-native.utils/defstyle clojure.core/def
+ {react-native.utils/defprop  clojure.core/def
+  react-native.utils/defstyle clojure.core/def
+  react-native.utils/prop     clojure.core/identity
   react-native.utils/style    clojure.core/identity}}
