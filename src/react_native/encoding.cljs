@@ -1,5 +1,6 @@
 (ns react-native.encoding
-  (:require [cognitect.transit :as transit]))
+  (:require [cljs-bean.transit :as bean-transit]
+            [cognitect.transit :as transit]))
 
 (defn- js-plain-object? [x]
   (and (object? x)
@@ -15,8 +16,9 @@
   (transit/reader :json {:handlers {"js" read-js-data}}))
 
 (def transit-writer
-  (transit/writer :json {:handlers {js/Object (transit/write-handler "js" write-js-data)
-                                     js/Array  (transit/write-handler "js" write-js-data)}}))
+  (transit/writer :json {:handlers (merge (bean-transit/writer-handlers)
+                                           {js/Object (transit/write-handler "js" write-js-data)
+                                            js/Array  (transit/write-handler "js" write-js-data)})}))
 
 (defn ->transit [x] (transit/write transit-writer x))
 (defn ->clj [x] (transit/read transit-reader x))
